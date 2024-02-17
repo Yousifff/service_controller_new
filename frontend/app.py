@@ -14,6 +14,6 @@ def create_form():
                 st.success("Logged in successfully")
                 st.switch_page("pages/servers.py")
             else:
-                st.warning("Invalid username or password")
+                st.warning("Invalidd username or password")
 
 create_form()
