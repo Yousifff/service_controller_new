@@ -1,6 +1,6 @@
+
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
-
 
 def create_form():
     st.markdown("<h1 style='text-align:center;'>login page</h1>", unsafe_allow_html=True)
@@ -12,8 +12,6 @@ def create_form():
             if username and password:
 
                 st.success("Logged in successfully")
-                st.switch_page("pages/servers.py")
+                st.switch_page("frontend/pages/servers.py")
             else:
                 st.warning("Invalidd username or password")
-
-create_form()
