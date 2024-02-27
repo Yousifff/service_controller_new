@@ -6,7 +6,7 @@ show_pages(
     [
         Page("app.py",'Home'),
         Page("frontend/form.py",'Form'),
-        Page('frontend/pages/admin.py','Servers')
+        Page('frontend/pages/admin_v2.py','Servers')
     ]   
 )
 

@@ -12,6 +12,6 @@ def create_form():
             if username and password:
 
                 st.success("Logged in successfully")
-                st.switch_page("frontend/pages/admin.py")
+                st.switch_page("frontend/pages/admin_v2.py")
             else:
                 st.warning("Invalidd username or password")
