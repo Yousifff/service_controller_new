@@ -22,3 +22,8 @@ class Database:
     def list_servers(self):
         rows = self.cursor.execute("SELECT * FROM servers;")
         return rows.fetchall()
+
+    def delete_server(self, server_ip):
+        sql_comm = f"DELETE FROM servers WHERE ip=?;"
+        self.cursor.execute(sql_comm, (server_ip,))
+        self.conn.commit()

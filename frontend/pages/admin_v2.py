@@ -41,6 +41,13 @@ with server:
             for item in range(len(servers)):
                 st.button("httpd",key=idx+20)
                 idx += 1
+    with deleting_server:
+        with st.form("Delete Server"):
+            server_ip = st.text_input("Server IP").lstrip()
+            submit = st.form_submit_button("Delete")
+            if submit:
+                db.delete_server(server_ip)
+
             
 
 
