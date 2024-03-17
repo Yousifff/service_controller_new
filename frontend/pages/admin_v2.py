@@ -19,9 +19,9 @@ def create_dynamic_buttons(idx,status="start"):
              clinet = SSHClient()
              clinet.set_missing_host_key_policy(paramiko.AutoAddPolicy())
              
-             clinet.connect(hostname="192.168.100.114",username='yousif',password='Ss@s1598')
+             clinet.connect(hostname="ip",username='username',password='pass')
              stdin,stdout,stderr = clinet.exec_command(f'sudo -S systemctl {status} apache2.service')
-             stdin.write("Ss@s1598" + "\n")
+             stdin.write("pass" + "\n")
              stdin.flush()
              print(f'STDOUT: {stdout.read().decode("utf8")}')
              print(f'STDERR: {stderr.read().decode("utf8")}') 
