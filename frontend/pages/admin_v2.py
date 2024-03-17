@@ -2,6 +2,9 @@ import streamlit as st
 import extra_streamlit_components as stx
 
 from datastore.db import Database
+import paramiko
+from paramiko import SSHClient
+
 
 db = Database()
 db.create_table()
@@ -13,8 +16,22 @@ def create_dynamic_buttons(idx,status="start"):
          action_button = st.button(status, key=count)
 
          if action_button:
-             st.toast(f'service has been {status}ed')
+             clinet = SSHClient()
+             clinet.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+             
+             clinet.connect(hostname="192.168.100.114",username='yousif',password='Ss@s1598')
+             stdin,stdout,stderr = clinet.exec_command(f'sudo -S systemctl {status} apache2.service')
+             stdin.write("Ss@s1598" + "\n")
+             stdin.flush()
+             print(f'STDOUT: {stdout.read().decode("utf8")}')
+             print(f'STDERR: {stderr.read().decode("utf8")}') 
+             clinet.close()
 
+def generate_services(idx,service_name):
+    for server in range(len(servers)):
+        count = idx*len(servers) + server
+        service_button = st.button(service_name,key=count)
+        
 
 with server:
     adding_server, listing_servers, deleting_server = st.tabs(['Add', 'List', 'Delete'])
@@ -39,10 +56,8 @@ with server:
             create_dynamic_buttons(300,'start')
 
         with col5:
-            idx = 3
-            for item in range(len(servers)):
-                count = idx*len(servers) + item
-                st.button("httpd", key=count)
+            
+            generate_services(400,'httpd')
     with deleting_server:
         with st.form("Delete Server"):
             server_ip = st.text_input("Server IP").lstrip()
