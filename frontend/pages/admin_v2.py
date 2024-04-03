@@ -8,20 +8,26 @@ from paramiko import SSHClient
 import logging
 
 
+db = Database()
+
+
 def check_permissions_based_on_role(status, role):
-    role_has_permissions = status in ["restart", "stop"] and role not in ["admin", "super-admin"]
+    role_has_permissions = status in ["start", "stop"] and role in ["admin", "super-admin"]
 
     return role_has_permissions
 
 
-def check_permissions_based_on_user(status, username, server):
-
+def check_permissions_based_on_user(status):
+    permission = db.get_user_permission(st.session_state['username'])
+    
     # TODO: get value from database table
-
-    role_has_permissions = False
-
-    return role_has_permissions
-
+    #if permission[0][2] == 'full':
+    #    return ['start','stop']
+    #else:
+    #    return [permission[0][2]]
+    if status in permission:
+        return True
+    return False
 db = Database()
 
 
@@ -30,13 +36,11 @@ server, user, privileges = st.tabs(["Server Managment", "User Managment",'Privil
 
 
 
-def create_dynamic_buttons(idx,status, role="user"):
-    
+def create_dynamic_buttons(idx,status):
      for item in range(len(servers)):
          count = idx*len(servers) + item
 
-         role_has_permissions = check_permissions_based_on_role(role, status)
-
+         role_has_permissions = check_permissions_based_on_user(status)
          if role_has_permissions:
 
             action_button = st.button(status, key=count)
@@ -60,12 +64,12 @@ def create_dynamic_buttons(idx,status, role="user"):
                 print(f'STDERR: {stderr.read().decode("utf8")}') 
                 clinet.close()
 
-
-def generate_services(idx,service_name):
-    for server in range(len(servers)):
-        count = idx*len(servers) + server
-        st.text(service_name)
-        st.session_state['service'] = service_name
+         else:
+            continue
+def generate_services(idx,services):
+    for service in range(len(services)):
+        count = idx*len(services) + service
+        st.text(services[service])
        
 
 with server:
@@ -79,25 +83,24 @@ with server:
             if submit:
                 db.insert_into(server_ip,service)
     with listing_servers:
-        col1, col2, col3, col4, col5 = st.columns(5)
+        
+        col1, col2, col3, col4 = st.columns(4)
 
-        role = st.session_state["role"]
+        #role = st.session_state["role"]
         with col1:
             servers = db.list_servers()
             for server in servers:
-                st.markdown(server[0])
+                st.markdown(server)
         with col2:
-            create_dynamic_buttons(100,'stop', role)
+            create_dynamic_buttons(100,'stop')
+        #with col3:
+        #    create_dynamic_buttons(200,'restart')
         with col3:
-            create_dynamic_buttons(200,'restart', role)
-        with col4:
-            create_dynamic_buttons(300,'start', role)
+            create_dynamic_buttons(300,'start')
 
-        with col5:
+        with col4:
             services = db.list_services()
-            for service in services:
-                service = service[0]
-                generate_services(400,service)
+            generate_services(400,services)
                 
     with deleting_server:
         with st.form("Delete Server"):
@@ -124,17 +127,11 @@ with user:
 
 with privileges:
     with st.form("privileges"):
-        stop_svc = False
-        start_svc = False
         server_ip = st.text_input("Server IP").lstrip()
         username = st.text_input("username").lstrip()
-        stop = st.checkbox('stop')
-        start = st.checkbox("start")
-        if stop:
-            stop_svc = True
+        btn_name = st.text_input("button name").lstrip()
         
-        if start:
-            start_svc = True
-        submit = st.form_submit_button("submit")
+        submit = st.form_submit_button("Save")
         if submit:
-            db.add_privilege(server_ip,username,stop_svc,start_svc)
+            db.add_privilege(server_ip,username,btn_name)
+            
