@@ -51,14 +51,14 @@ def create_dynamic_buttons(idx,status):
                 clinet = SSHClient()
                 clinet.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 
-                clinet.connect(hostname="192.168.100.114",username='yousif',password='Ss@s1598')
+                clinet.connect(hostname="",username='',password='')
                 command_string = f'sudo -S systemctl {status} {st.session_state["service"]}'
 
                 logging.info("Attempting to execute the following command:")
                 logging.info(command_string)
                 
                 stdin,stdout,stderr = clinet.exec_command(command=command_string)
-                stdin.write("Ss@s1598" + "\n")
+                stdin.write("" + "\n")
                 stdin.flush()
                 print(f'STDOUT: {stdout.read().decode("utf8")}')
                 print(f'STDERR: {stderr.read().decode("utf8")}') 
